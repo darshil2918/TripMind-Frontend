@@ -237,6 +237,7 @@ export function Dashboard({ brief, itinerary, onReset }: { brief: TripBrief; iti
                 onDrop={() => onDrop(i)}
                 className="relative flex gap-4 pb-4"
               >
+
                 <div className="w-12 pt-2 text-right text-xs font-medium tabular-nums text-muted-foreground">
                   {b.time}
                 </div>
@@ -390,8 +391,13 @@ export function Dashboard({ brief, itinerary, onReset }: { brief: TripBrief; iti
                         {g.area} · {g.duration}
                       </div>
                     </div>
-                    <Button size="sm" variant="secondary" className="h-7 shrink-0 rounded-full bg-background text-foreground hover:bg-background/90">
-                      Add
+                    <Button
+                        size="sm"
+                        variant="secondary"
+                        className="h-7 shrink-0 rounded-full bg-background text-foreground hover:bg-background/90"
+                        onClick={() => addHiddenGemToTimeline(g)}
+                    >
+                        Add
                     </Button>
                   </li>
                 ))}
