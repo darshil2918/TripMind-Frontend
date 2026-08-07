@@ -143,6 +143,13 @@ export function Dashboard({ brief, itinerary, onReset }: { brief: TripBrief; iti
   // 🌟 THE SYNC MECHANISM
   // Whenever the AI data loads, OR whenever you click to Day 2, Day 3, etc.,
   // this copies the correct daily schedule into the draggable 'blocks' state.
+  const dayDateLabel = (() => {
+    if (!brief.startDate) return "";
+    const d = new Date(brief.startDate);
+    if (isNaN(d.getTime())) return "";
+    d.setDate(d.getDate() + (day - 1));
+    return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+  })();
   useEffect(() => {
     if (currentAiDay?.timeline) {
       setBlocks(currentAiDay.timeline);
@@ -194,12 +201,11 @@ export function Dashboard({ brief, itinerary, onReset }: { brief: TripBrief; iti
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <div className="px-3 text-sm font-medium tabular-nums">Day {day} · Mon, Jun 12</div>
-          <Button
+            <div className="px-3 text-sm font-medium tabular-nums">Day {day}{dayDateLabel ? ` · ${dayDateLabel}` : ""}</div>          <Button
             size="icon"
             variant="ghost"
             className="h-8 w-8 rounded-full"
-            onClick={() => setDay((d) => Math.min(7, d + 1))}
+            onClick={() => setDay((d) => Math.min(isAiActive ? aiDays.length : 7, d + 1))}
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
@@ -231,6 +237,7 @@ export function Dashboard({ brief, itinerary, onReset }: { brief: TripBrief; iti
                 onDrop={() => onDrop(i)}
                 className="relative flex gap-4 pb-4"
               >
+
                 <div className="w-12 pt-2 text-right text-xs font-medium tabular-nums text-muted-foreground">
                   {b.time}
                 </div>
@@ -384,8 +391,13 @@ export function Dashboard({ brief, itinerary, onReset }: { brief: TripBrief; iti
                         {g.area} · {g.duration}
                       </div>
                     </div>
-                    <Button size="sm" variant="secondary" className="h-7 shrink-0 rounded-full bg-background text-foreground hover:bg-background/90">
-                      Add
+                    <Button
+                        size="sm"
+                        variant="secondary"
+                        className="h-7 shrink-0 rounded-full bg-background text-foreground hover:bg-background/90"
+                        onClick={() => addHiddenGemToTimeline(g)}
+                    >
+                        Add
                     </Button>
                   </li>
                 ))}
